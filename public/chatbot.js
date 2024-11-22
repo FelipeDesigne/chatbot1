@@ -85,14 +85,13 @@ class ChatBot {
     const iframe = document.createElement('iframe');
     iframe.className = 'chatbot-iframe closed';
     
-    // Get the current script URL to determine the widget URL
+    // Get the base URL from the current script
     const currentScript = document.currentScript || document.querySelector('script[src*="chatbot.js"]');
     const scriptUrl = new URL(currentScript.src);
-    const widgetUrl = new URL('/widget', scriptUrl.origin);
-    widgetUrl.searchParams.set('empresaId', this.config.empresaId);
+    const baseUrl = scriptUrl.origin + scriptUrl.pathname.replace('chatbot.js', '');
     
-    // Set the src to our widget URL with the company ID
-    iframe.src = widgetUrl.toString();
+    // Set the iframe src with the correct path and parameters
+    iframe.src = `${baseUrl}widget?empresaId=${this.config.empresaId}`;
 
     // Create toggle button
     const toggleButton = this.createToggleButton();

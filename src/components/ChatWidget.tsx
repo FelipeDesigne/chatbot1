@@ -10,7 +10,11 @@ interface Message {
   isBot: boolean;
 }
 
-export function ChatWidget() {
+interface ChatWidgetProps {
+  empresaId: string;
+}
+
+export function ChatWidget({ empresaId }: ChatWidgetProps) {
   const [messages, setMessages] = useState<Message[]>([
     { text: 'Olá! Como posso ajudar você hoje?', isBot: true }
   ]);
@@ -21,9 +25,6 @@ export function ChatWidget() {
 
   useEffect(() => {
     const loadCompanyInfo = async () => {
-      const params = new URLSearchParams(window.location.search);
-      const empresaId = params.get('empresaId');
-      
       if (empresaId) {
         const docRef = doc(db, 'companies', empresaId);
         const docSnap = await getDoc(docRef);
@@ -31,18 +32,18 @@ export function ChatWidget() {
         if (docSnap.exists()) {
           const data = docSnap.data();
           setCompanyInfo(`
-            Nome da Empresa: ${data.name}
-            Horário de Funcionamento: ${data.businessHours}
-            Serviços: ${data.services}
-            Política de Atendimento: ${data.supportPolicy}
-            Contato: ${data.contact}
+            Nome da empresa: ${data.name}
+            Descrição: ${data.description}
+            Horário de funcionamento: ${data.businessHours}
+            Telefone: ${data.phone}
+            Produtos/Serviços: ${data.products}
           `);
         }
       }
     };
 
     loadCompanyInfo();
-  }, []);
+  }, [empresaId]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -52,10 +53,11 @@ export function ChatWidget() {
     scrollToBottom();
   }, [messages]);
 
-  const handleSend = async () => {
-    if (!input.trim()) return;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
 
-    const userMessage = input;
+    const userMessage = input.trim();
     setInput('');
     setMessages(prev => [...prev, { text: userMessage, isBot: false }]);
     setIsLoading(true);
@@ -64,57 +66,41 @@ export function ChatWidget() {
       const response = await chat(userMessage, companyInfo);
       setMessages(prev => [...prev, { text: response, isBot: true }]);
     } catch (error) {
-      setMessages(prev => [...prev, { 
-        text: 'Desculpe, ocorreu um erro. Por favor, tente novamente mais tarde.', 
-        isBot: true 
-      }]);
-    } finally {
-      setIsLoading(false);
+      console.error('Error chatting:', error);
+      setMessages(prev => [...prev, { text: 'Desculpe, ocorreu um erro. Tente novamente mais tarde.', isBot: true }]);
     }
+
+    setIsLoading(false);
   };
 
   return (
-    <div className="fixed bottom-4 right-4 w-96 bg-white rounded-xl shadow-lg overflow-hidden">
-      {/* Header */}
-      <div className="bg-blue-600 p-4">
-        <h1 className="text-white text-lg font-semibold">Atendimento Online</h1>
-      </div>
-
-      {/* Chat Messages */}
-      <div className="h-[400px] overflow-y-auto p-4 space-y-4">
+    <div className="flex flex-col h-screen bg-gray-50">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message, index) => (
           <ChatMessage key={index} message={message.text} isBot={message.isBot} />
         ))}
-        {isLoading && (
-          <div className="flex gap-2 items-center text-gray-500">
-            <div className="animate-bounce">●</div>
-            <div className="animate-bounce delay-100">●</div>
-            <div className="animate-bounce delay-200">●</div>
-          </div>
-        )}
+        {isLoading && <ChatMessage message="Digitando..." isBot={true} />}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
-      <div className="p-4 border-t">
+      <form onSubmit={handleSubmit} className="p-4 border-t bg-white">
         <div className="flex gap-2">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Digite sua mensagem..."
             className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
-            onClick={handleSend}
+            type="submit"
             disabled={isLoading}
-            className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+            className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
           >
-            <SendHorizontal className="w-5 h-5" />
+            <SendHorizontal size={20} />
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

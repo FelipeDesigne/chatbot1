@@ -8,10 +8,12 @@ import { ChatWidget } from './components/ChatWidget';
 
 export default function App() {
   // Check if we're in widget mode
-  const isWidget = window.location.pathname === '/widget';
+  const params = new URLSearchParams(window.location.search);
+  const isWidget = window.location.pathname.includes('/widget');
+  const empresaId = params.get('empresaId');
 
-  if (isWidget) {
-    return <ChatWidget />;
+  if (isWidget && empresaId) {
+    return <ChatWidget empresaId={empresaId} />;
   }
 
   return (
