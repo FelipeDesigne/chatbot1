@@ -80,14 +80,12 @@ export function CompanyDetails() {
     script.src = "${getScriptUrl()}";
     script.onload = function() {
         new ChatBot({
-            empresaId: '${id}',
-            container: 'chatbot-container'
+            empresaId: '${id}'
         });
     };
     document.head.appendChild(script);
 })();
 </script>
-<div id="chatbot-container"></div>
 <!-- Fim do ChatBot -->`;
 
   if (loading) {
