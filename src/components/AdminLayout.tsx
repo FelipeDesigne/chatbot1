@@ -1,47 +1,55 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Building2, List, Plus } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Building2, Plus, Moon, Sun } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
-  const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      {/* Sidebar */}
-      <div className="w-64 bg-white shadow-lg">
-        <div className="p-4 border-b">
-          <h1 className="text-xl font-bold text-blue-600">ChatBot Admin</h1>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <nav className="bg-white dark:bg-gray-800 shadow">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex">
+              <div className="flex-shrink-0 flex items-center">
+                <Link to="/admin" className="text-xl font-bold text-gray-800 dark:text-white">
+                  ChatBot1
+                </Link>
+              </div>
+              <div className="ml-6 flex space-x-8">
+                <Link
+                  to="/admin/companies"
+                  className="inline-flex items-center px-1 pt-1 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white"
+                >
+                  <Building2 className="w-5 h-5 mr-1" />
+                  Empresas
+                </Link>
+                <Link
+                  to="/admin/companies/new"
+                  className="inline-flex items-center px-1 pt-1 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white"
+                >
+                  <Plus className="w-5 h-5 mr-1" />
+                  Nova Empresa
+                </Link>
+              </div>
+            </div>
+            <div className="flex items-center">
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-lg text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                title={theme === 'light' ? 'Ativar modo escuro' : 'Ativar modo claro'}
+              >
+                {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+              </button>
+            </div>
+          </div>
         </div>
-        <nav className="p-4">
-          <Link
-            to="/admin/companies"
-            className={`flex items-center gap-2 p-2 rounded-lg ${
-              location.pathname === '/admin/companies'
-                ? 'bg-blue-50 text-blue-600'
-                : 'text-gray-600 hover:bg-gray-50'
-            }`}
-          >
-            <List size={20} />
-            <span>Empresas</span>
-          </Link>
-          <Link
-            to="/admin/companies/new"
-            className={`flex items-center gap-2 p-2 rounded-lg ${
-              location.pathname === '/admin/companies/new'
-                ? 'bg-blue-50 text-blue-600'
-                : 'text-gray-600 hover:bg-gray-50'
-            }`}
-          >
-            <Plus size={20} />
-            <span>Nova Empresa</span>
-          </Link>
-        </nav>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 p-8">
-        {children}
-      </div>
+      </nav>
+      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="px-4 py-4 sm:px-0">
+          {children}
+        </div>
+      </main>
     </div>
   );
 }

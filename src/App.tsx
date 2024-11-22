@@ -5,6 +5,7 @@ import { CompaniesList } from './pages/CompaniesList';
 import { CompanyForm } from './pages/CompanyForm';
 import { CompanyDetails } from './pages/CompanyDetails';
 import { ChatWidget } from './components/ChatWidget';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 export default function App() {
   // Check if we're in widget mode
@@ -17,14 +18,16 @@ export default function App() {
   }
 
   return (
-    <HashRouter>
-      <Routes>
-        <Route path="/admin" element={<AdminLayout><Navigate to="/admin/companies" replace /></AdminLayout>} />
-        <Route path="/admin/companies" element={<AdminLayout><CompaniesList /></AdminLayout>} />
-        <Route path="/admin/companies/new" element={<AdminLayout><CompanyForm /></AdminLayout>} />
-        <Route path="/admin/companies/:id" element={<AdminLayout><CompanyDetails /></AdminLayout>} />
-        <Route path="/" element={<Navigate to="/admin" replace />} />
-      </Routes>
-    </HashRouter>
+    <ThemeProvider>
+      <HashRouter>
+        <Routes>
+          <Route path="/admin" element={<AdminLayout><Navigate to="/admin/companies" replace /></AdminLayout>} />
+          <Route path="/admin/companies" element={<AdminLayout><CompaniesList /></AdminLayout>} />
+          <Route path="/admin/companies/new" element={<AdminLayout><CompanyForm /></AdminLayout>} />
+          <Route path="/admin/companies/:id" element={<AdminLayout><CompanyDetails /></AdminLayout>} />
+          <Route path="/" element={<Navigate to="/admin" replace />} />
+        </Routes>
+      </HashRouter>
+    </ThemeProvider>
   );
 }
