@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AdminLayout } from './components/AdminLayout';
 import { CompaniesList } from './pages/CompaniesList';
 import { CompanyForm } from './pages/CompanyForm';
@@ -15,7 +15,7 @@ export default function App() {
   }
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/admin" element={<AdminLayout><Navigate to="/admin/companies" replace /></AdminLayout>} />
         <Route path="/admin/companies" element={<AdminLayout><CompaniesList /></AdminLayout>} />
@@ -23,6 +23,6 @@ export default function App() {
         <Route path="/admin/companies/:id" element={<AdminLayout><CompanyDetails /></AdminLayout>} />
         <Route path="/" element={<Navigate to="/admin" replace />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
