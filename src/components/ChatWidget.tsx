@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Send, Moon, Sun } from 'lucide-react';
-import { useTheme } from '../contexts/ThemeContext';
+import { Send } from 'lucide-react';
 import { db } from '../services/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { useGemini } from '../hooks/useGemini';
+import { ThemeToggle } from './ThemeToggle';
 
 interface ChatWidgetProps {
   empresaId: string;
@@ -19,7 +19,6 @@ export function ChatWidget({ empresaId }: ChatWidgetProps) {
   const [newMessage, setNewMessage] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [loading, setLoading] = useState(false);
-  const { theme, toggleTheme } = useTheme();
   const { getResponse } = useGemini();
 
   useEffect(() => {
@@ -77,13 +76,7 @@ export function ChatWidget({ empresaId }: ChatWidgetProps) {
         <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
           {companyName || 'Chat'}
         </h2>
-        <button
-          onClick={toggleTheme}
-          className="p-2 rounded-lg text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-          title={theme === 'light' ? 'Ativar modo escuro' : 'Ativar modo claro'}
-        >
-          {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
-        </button>
+        <ThemeToggle />
       </div>
 
       {/* Messages */}

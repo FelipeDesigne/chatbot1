@@ -14,7 +14,11 @@ export default function App() {
   const empresaId = params.get('empresaId');
 
   if (isWidget && empresaId) {
-    return <ChatWidget empresaId={empresaId} />;
+    return (
+      <ThemeProvider>
+        <ChatWidget empresaId={empresaId} />
+      </ThemeProvider>
+    );
   }
 
   return (

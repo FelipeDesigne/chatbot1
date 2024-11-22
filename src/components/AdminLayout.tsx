@@ -1,10 +1,8 @@
 import { Link } from 'react-router-dom';
-import { Building2, Plus, Moon, Sun } from 'lucide-react';
-import { useTheme } from '../contexts/ThemeContext';
+import { Building2, Plus } from 'lucide-react';
+import { ThemeToggle } from './ThemeToggle';
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { theme, toggleTheme } = useTheme();
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <nav className="bg-white dark:bg-gray-800 shadow">
@@ -34,13 +32,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
               </div>
             </div>
             <div className="flex items-center">
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-lg text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                title={theme === 'light' ? 'Ativar modo escuro' : 'Ativar modo claro'}
-              >
-                {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
-              </button>
+              <ThemeToggle />
             </div>
           </div>
         </div>
