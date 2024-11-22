@@ -10,25 +10,34 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    // Pega o tema salvo ou usa o padrão do sistema
-    const [theme, setTheme] = useState<Theme>(() => {
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light' || savedTheme === 'dark') {
-            return savedTheme;
-        }
-        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    });
+    const [mounted, setMounted] = useState(false);
+    const [theme, setTheme] = useState<Theme>('light');
 
-    // Atualiza a classe do HTML quando o tema muda
     useEffect(() => {
-        document.documentElement.classList.remove('light', 'dark');
-        document.documentElement.classList.add(theme);
-        localStorage.setItem('theme', theme);
-    }, [theme]);
+        const savedTheme = localStorage.getItem('theme') as Theme;
+        if (savedTheme) {
+            setTheme(savedTheme);
+        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            setTheme('dark');
+        }
+        setMounted(true);
+    }, []);
+
+    useEffect(() => {
+        if (mounted) {
+            document.documentElement.classList.remove('light', 'dark');
+            document.documentElement.classList.add(theme);
+            localStorage.setItem('theme', theme);
+        }
+    }, [theme, mounted]);
 
     const toggleTheme = () => {
         setTheme(prev => prev === 'light' ? 'dark' : 'light');
     };
+
+    if (!mounted) {
+        return null;
+    }
 
     return (
         <ThemeContext.Provider value={{ theme, toggleTheme }}>
